@@ -22,7 +22,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def stats(self, request, pk=None):
         project = self.get_object()  # Fetches the specific project instance
         tasks = project.tasks.all()  # Fetches all tasks associated with this project
-        today = timezone.now().date()
+        today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
 
         total_tasks = tasks.count()
         done_tasks = tasks.filter(status="done").count()
@@ -33,8 +34,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "todo": tasks.filter(status="todo").count(),
             "in_progress": tasks.filter(status="in_progress").count(),
             "done": done_tasks,
-            # Changed this to actually look at priority if you want high priority, 
-            # or keep your original due_date logic if it was intended for "due today"
             "high_priority": tasks.filter(priority="high").count(), 
             "overdue": tasks.filter(
                 due_date__lt=today,
@@ -49,6 +48,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_class = TaskFilter
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'due_date', 'priority']
@@ -58,4 +58,4 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Task.objects.filter(project__owner=self.request.user)
     
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(user=self.request.user)
