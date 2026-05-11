@@ -12,6 +12,7 @@ click==8.3.3
 coverage==7.13.5
 cryptography==47.0.0
 Django==6.0.4
+django-filter==25.2
 django-storages==1.14.6
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
@@ -52,3 +53,4 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.6.3
 uvicorn==0.46.0
+whitenoise==6.12.0
