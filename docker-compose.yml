@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    enviroment:
+      - SECRET_KEY=dev-secret-key-docker
+      - DEBUG=True
+      - DATABASE_URL=sqlite:///./db.sqlite3
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python manage.py migrante &&
+             python manage.py runserver 0.0.0.0.8000"
+             

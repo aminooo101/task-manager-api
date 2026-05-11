@@ -58,4 +58,4 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Task.objects.filter(project__owner=self.request.user)
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
